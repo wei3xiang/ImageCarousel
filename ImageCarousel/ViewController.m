@@ -15,15 +15,36 @@
 @property(nonatomic,strong) UIPageControl *pageControl;
 
 @property(nonatomic,strong) NSTimer *timer;
+
+#define imageCount 5
+
 @end
 
 @implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    for (int i=0; i<imageCount; i++) {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"img_%02d",i+1]];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.scroView.bounds];//bounds
+        imageView.image = image;
+        CGRect frame = imageView.frame;
+        frame.origin.x = i * frame.size.width;
+        imageView.frame = frame;//frame
+        [self.scroView addSubview:imageView];
+    }
+    
+    self.pageControl.currentPage = 0;
+    [self startTimer];
+}
+
 
 -(UIScrollView *)scroView{
     if(nil == _scroView){
         _scroView = [[UIScrollView alloc] initWithFrame:CGRectMake(10,20, 300, 130)];
         [_scroView setBackgroundColor:[UIColor redColor]];
-        _scroView.contentSize = CGSizeMake(_scroView.bounds.size.width*5, 0);
+        _scroView.contentSize = CGSizeMake(_scroView.bounds.size.width*imageCount, 0);
         _scroView.showsHorizontalScrollIndicator = NO;
         _scroView.showsVerticalScrollIndicator = NO;
         _scroView.pagingEnabled = YES;
@@ -34,18 +55,12 @@
     return _scroView;
 }
 
-
--(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-    int page =  scrollView.contentOffset.x/scrollView.bounds.size.width;
-    self.pageControl.currentPage = page;
-}
-
 -(UIPageControl *)pageControl{
     
     if(nil == _pageControl){
         _pageControl = [[UIPageControl alloc] init];
-        _pageControl.numberOfPages = 5;
-        CGSize size = [_pageControl sizeForNumberOfPages:5];
+        _pageControl.numberOfPages = imageCount;
+        CGSize size = [_pageControl sizeForNumberOfPages:imageCount];
         _pageControl.bounds = CGRectMake(0, 0, size.width, size.height);
         _pageControl.center = CGPointMake(self.view.center.x, 130);
         _pageControl.pageIndicatorTintColor = [UIColor redColor];
@@ -61,23 +76,9 @@
     [self.scroView setContentOffset:CGPointMake(x, 0) animated:YES];
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    for (int i=0; i<5; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"img_%02d",i+1]];
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.scroView.bounds];//bounds
-        imageView.image = image;
-        CGRect frame = imageView.frame;
-        frame.origin.x = i * frame.size.width;
-        imageView.frame = frame;//frame
-        [self.scroView addSubview:imageView];
-    }
-    
-    self.pageControl.currentPage = 0;
-    [self startTimer];
-    
-    
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    int page =  scrollView.contentOffset.x/scrollView.bounds.size.width;
+    self.pageControl.currentPage = page;
 }
 
 -(void)startTimer{
@@ -85,7 +86,7 @@
 }
 
 -(void)refreshTimer{
-    int page = (self.pageControl.currentPage +1)%5;
+    int page = (self.pageControl.currentPage +1)%imageCount;
     self.pageControl.currentPage = page;
     [self changeImg:self.pageControl];
 }
