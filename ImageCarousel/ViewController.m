@@ -32,6 +32,10 @@
         CGRect frame = imageView.frame;
         frame.origin.x = i * frame.size.width;
         imageView.frame = frame;//frame
+        
+//        CGRect bounds = imageView.bounds;
+//        bounds.origin.x = i*bounds.size.width;
+//        imageView.bounds = bounds;
         [self.scroView addSubview:imageView];
     }
     
